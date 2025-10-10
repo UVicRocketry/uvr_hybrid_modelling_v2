@@ -1,5 +1,8 @@
+import os
 import argparse
 import importlib
+import time
+
 from src.utils.kwargs_builder import build_kwargs
 from src.utils.flight_sim_kwargs_builder import build_flight_sim_kwargs
 from src.sim.prop_sim import prop_sim
@@ -34,16 +37,28 @@ def run(input_file):
     if user_input =='1':
 
         kwargs = build_kwargs(program_input)
+
+        start_time = time.time()
         prop_results = prop_sim(kwargs)
-        
-        build_rocketpy_input_csv(prop_results, "m_dot_ox")
-        build_rocketpy_input_csv(prop_results, "m_dot_fuel")
-        build_rocketpy_input_csv(prop_results, "thrust")
+        end_time = time.time()
+        elapsed = end_time - start_time
+
+        print(f"\nSimulation completed in real time {elapsed:.2f} seconds ({elapsed/60:.2f} min)\n")
+
+        # Make a directory path for this case
+        case_dir = os.path.join("src/results", str(input_file))
+
+        # Save outputs into that folder
+        build_rocketpy_input_csv(prop_results, "m_dot_ox", output_dir=case_dir)
+        if kwargs["models_kwargs"]["fuel_tank_model"] is not None: 
+            build_rocketpy_input_csv(prop_results, "m_dot_fuel", output_dir=case_dir)
+        if kwargs["models_kwargs"]["cc_model"] != 3:
+            build_rocketpy_input_csv(prop_results, "thrust", output_dir=case_dir)
 
         plot_sim_results(program_input, prop_results, program_input.mode, program_input.save_path)
 
     if user_input =='2':
-        flight_sim_kwargs = build_flight_sim_kwargs(program_input)
+        flight_sim_kwargs = build_flight_sim_kwargs(input_file, program_input)
         flight = flight_sim(flight_sim_kwargs)
 
     """
