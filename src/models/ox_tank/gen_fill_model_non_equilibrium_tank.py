@@ -330,7 +330,7 @@ def build_tank_initial_state(P_tank, V_tank, m_ox, T_atm):
     T_liq = T_sat
     m_liq = m_ox-m_gas
     v_liq = 1/rho_liq
-    V_liq = v_liq*m_liq
+    #V_liq = v_liq*m_liq
 
     # NOTE: ASSUME TANK WALL AT T_ATM, MAKE SURE THIS MATCHES REAL WORLD INITIAL CONDITIONS
     T_wall_liq = T_atm
@@ -709,7 +709,7 @@ def main():
     botl_Cd_inj = 0.0000255
     botl_A_inj = 1 #NOTE: THIS CORRESPONDS TO A B BODY DK-LOK VALVE     #0.25*np.pi*(0.0254*(.400))**2
 
-    #no venting
+    #K type nitrous bottle has no venting
     botl_Cd_vent = 0
     botl_A_vent = 0
 
@@ -723,6 +723,31 @@ def main():
 
 
 
+
+    ### M2 RUN TANK ### - 
+    full_pcnt_fill = 0.90 #TODO: %_fill_T_max = .90 | %_fill_T_min = 0.74
+
+    run_tank_m_nos = 0.4 #kg NOTE: initial small seed mass for startup transient
+    run_tank_P_tank = P_atm #Pa #NOTE: assuming initial condition of tank is filled w nitrous @ P_atm
+    run_tank_V_tank = (7.279664/1000) #m^3
+
+    run_tank_diam_in = 0.0254*(6.07) #m 
+    run_tank_diam_out = 0.0254*(6.625) #m 
+    run_tank_rho_wall = 2770 #kg/m^3
+    run_tank_k_w = 237 #W/(m K)
+
+    run_tank_Cd_vent = 0.65 #using this from RPE 9th ed p279 - corresponds to a sharp edge orifice
+    run_tank_A_vent = 0.25*np.pi*(0.0254*(.030))**2 #NOTE: assuming vent orifice diam!
+
+    #no draining
+    run_tank_Cd_inj = 0
+    run_tank_A_inj = 0
+
+
+
+
+
+    """
     ### S1 RUN TANK ### - GND % fill
     full_pcnt_fill = 0.50 #TODO: %_fill_T_max = .52 | %_fill_T_min = 0.48
 
@@ -741,7 +766,8 @@ def main():
     #no draining
     run_tank_Cd_inj = 0
     run_tank_A_inj = 0
-
+    """
+    
     """
     ### S1 RUN TANK ### - FLIGHT % fill
     full_pcnt_fill = 0.9
